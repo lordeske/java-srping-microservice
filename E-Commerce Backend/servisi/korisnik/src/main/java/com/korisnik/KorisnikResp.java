@@ -8,10 +8,10 @@ public class KorisnikResp {
     private String email;
     private Adresa adresa;
 
-    // Prazan konstruktor
+
     public KorisnikResp() {}
 
-    // Konstruktor sa svim poljima
+
     public KorisnikResp(String id, String ime, String prezime, String email, Adresa adresa) {
         this.id = id;
         this.ime = ime;
@@ -20,7 +20,7 @@ public class KorisnikResp {
         this.adresa = adresa;
     }
 
-    // Getteri
+
     public String getId() {
         return id;
     }
