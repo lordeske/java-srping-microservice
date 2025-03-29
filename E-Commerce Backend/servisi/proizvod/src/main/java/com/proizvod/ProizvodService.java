@@ -30,15 +30,15 @@ public class ProizvodService {
 
     public List<KupljeniProizovdiResp> kupiProizvode(List<KupljeniProizovdiReq> kupljeniProizvodiReq) {
 
-        List<Integer> listIDProizvoda = kupljeniProizvodiReq.stream()
+        List<Integer> proizvodiIDs = kupljeniProizvodiReq.stream()
                 .map(KupljeniProizovdiReq::idProizvoda)
-                .toList();
+                .toList(); // 1,2,3,4
 
 
-        List<Proizvod> sviProizvodiPoID = proizovdRepo.findAllByIdInOrdrById(listIDProizvoda);
+        List<Proizvod> proizvodiNaStanju = proizovdRepo.findAllByIdInOrdrById(proizvodiIDs);
 
 
-        if(listIDProizvoda.size() != sviProizvodiPoID.size() )
+        if(proizvodiIDs.size() != proizvodiNaStanju.size() )
         {
 
 
@@ -48,7 +48,7 @@ public class ProizvodService {
         }
 
 
-        List <KupljeniProizovdiReq> storedZahtjev = kupljeniProizvodiReq
+        List <KupljeniProizovdiReq> sortiraniZahtjevi = kupljeniProizvodiReq
                 .stream()
                 .sorted(Comparator.comparing(KupljeniProizovdiReq::idProizvoda))
                 .toList();
@@ -56,13 +56,32 @@ public class ProizvodService {
 
         List <KupljeniProizovdiResp> kupljeniProizovdi = new ArrayList<>();
 
-        for(int i =0  ; i < storedZahtjev.size() ; i++ )
+        for(int i =0  ; i < sortiraniZahtjevi.size() ; i++ )
         {
 
-         /// ovde dodati
+            Proizvod proizvod = proizvodiNaStanju.get(i);
+
+            KupljeniProizovdiReq proizovdiReq = sortiraniZahtjevi.get(i);
+
+
+            if(proizvod.getBrojDostupnih() < proizovdiReq.kolicina())
+            {
+
+                throw new NemaProizvodaNaStanjuException("Prozivod "+ proizvod.getNazivProizvoda() + " nema toliko zaliha");
+
+            }
+
+            double noviBrojDostupnosti = proizvod.getBrojDostupnih() - proizovdiReq.kolicina();
+
+            proizvod.setBrojDostupnih(noviBrojDostupnosti);
+            proizovdRepo.save(proizvod);
+
+
+            kupljeniProizovdi.add(mapper.uKupljeniOdg(proizvod, proizovdiReq.kolicina()));
 
         }
 
+        return kupljeniProizovdi;
 
     }
 

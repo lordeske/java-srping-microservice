@@ -39,4 +39,24 @@ public class ProizvodMapper {
 
 
     }
+
+    public KupljeniProizovdiResp uKupljeniOdg(Proizvod proizvod, double kolicina) {
+
+
+
+        return new KupljeniProizovdiResp(
+                proizvod.getId(),
+                proizvod.getNazivProizvoda(),
+                proizvod.getOpisProizvoda(),
+                proizvod.getCena(),
+                kolicina
+        );
+
+
+
+
+
+
+
+    }
 }

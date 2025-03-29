@@ -41,6 +41,27 @@ public class GlobalniExceptionProizvod {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(greske);
     }
+
+
+
+    @ExceptionHandler(NemaProizvodaNaStanjuException.class)
+    public ResponseEntity<ApiGreske> handleNemaProizvodaNaStanju(
+            NemaProizvodaNaStanjuException exception,
+            HttpServletRequest zahtjev
+    ) {
+        ApiGreske apiGreske = new ApiGreske();
+        apiGreske.setError("Nema proizvoda na stanju");
+        apiGreske.setPath(zahtjev.getRequestURI());
+        apiGreske.setTimestamp(LocalDateTime.now());
+        apiGreske.setMessage(exception.getMessage());
+        apiGreske.setStatus(HttpStatus.CONFLICT.value());
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(apiGreske);
+    }
+
+
 }
 
 
