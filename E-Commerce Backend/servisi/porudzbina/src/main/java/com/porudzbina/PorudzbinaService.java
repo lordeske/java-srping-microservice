@@ -13,9 +13,21 @@ public class PorudzbinaService {
     private  KorisnikKlijent korisnikKlijent;
 
 
+    @Autowired
     private ProizvodKlijent proizvodKlijent;
 
-    private
+    @Autowired
+    private PorudzbinaRepo porudzbinaRepo;
+
+
+    private PordzbinaMapper porudzinaMapper;
+
+
+    @Autowired
+    private StavkePorudzbineService stavkePorudzbineService;
+
+
+
 
     public Integer kreirajPorudzbinu(PorudzbinaReq porudzbinaReq) {
 
@@ -24,7 +36,34 @@ public class PorudzbinaService {
 
 
 
+        proizvodKlijent.kupiProizvode(porudzbinaReq.proizvodi());
 
 
+
+        Porudzbina porudzbina = porudzbinaRepo.save(porudzinaMapper.izReqUPordz(porudzbinaReq));
+
+
+        for(KupovinaZahtjev kupovinaZahtjev : porudzbinaReq.proizvodi())
+        {
+            stavkePorudzbineService.sacuvajStavkePorudzbine(
+                    new StavkePorudzbineReq(porudzbina.getId(),
+                            kupovinaZahtjev.idProizvoda(),
+                            kupovinaZahtjev.kolicinaProizvoda())
+            );
+
+
+        }
+
+
+
+        //// dodati placanje kasnije
+
+
+
+        /// dodati slanje notifikacije
+
+
+
+        return null;
     }
 }
