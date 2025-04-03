@@ -22,4 +22,18 @@ public class StavkePorudzbineMapper {
                 .build();
 
     }
+
+    public StavkePorudzbineResp uStavkePorudzbineResp(StavkePorudzbine stavkePorudzbine) {
+
+
+        return new StavkePorudzbineResp(
+                stavkePorudzbine.getId(),
+                stavkePorudzbine.getKolicina()
+        );
+
+
+
+
+    }
+
 }

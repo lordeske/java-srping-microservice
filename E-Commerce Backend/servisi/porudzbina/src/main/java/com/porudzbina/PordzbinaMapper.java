@@ -18,4 +18,16 @@ public class PordzbinaMapper {
 
 
     }
+
+    public PorudzbinaResp uResponse(Porudzbina porudzbina) {
+
+            return new PorudzbinaResp(
+                    porudzbina.getId(),
+                    porudzbina.getReferenca(),
+                    porudzbina.getNacinPlacanja(),
+                    porudzbina.getIdKorisnika()
+            );
+
+
+    }
 }

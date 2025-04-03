@@ -1,9 +1,15 @@
 package com.porudzbina;
 
 
+import com.porudzbina.Kafka.PorudzbinaProducer;
+import com.porudzbina.Kafka.PotvrdaPorudzbine;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class PorudzbinaService {
@@ -27,6 +33,10 @@ public class PorudzbinaService {
     private StavkePorudzbineService stavkePorudzbineService;
 
 
+    @Autowired
+    private PorudzbinaProducer producer;
+
+
 
 
     public Integer kreirajPorudzbinu(PorudzbinaReq porudzbinaReq) {
@@ -36,7 +46,7 @@ public class PorudzbinaService {
 
 
 
-        proizvodKlijent.kupiProizvode(porudzbinaReq.proizvodi());
+        List<KupljeniProizovdiResp> kupljeniProizovdiResp =  proizvodKlijent.kupiProizvode(porudzbinaReq.proizvodi());
 
 
 
@@ -60,10 +70,43 @@ public class PorudzbinaService {
 
 
 
-        /// dodati slanje notifikacije
+        /// slanje notifikacije
+        producer.posaljiPotvrduPorudzbine(
+                new PotvrdaPorudzbine(
+
+                        porudzbinaReq.referenca(),
+                        porudzbinaReq.ukupnaCena(),
+                        porudzbinaReq.nacinPlacanja(),
+                        korisnik,
+                        kupljeniProizovdiResp
 
 
 
-        return null;
+
+
+
+
+                )
+        );
+
+
+      return  porudzbina.getId();
+    }
+
+    public List<PorudzbinaResp> nadjiSve() {
+
+
+        return porudzbinaRepo.findAll()
+                .stream()
+                .map(porudzinaMapper :: uResponse )
+                .collect(Collectors.toList());
+    }
+
+    public PorudzbinaResp nadjiPorudzbinu(Integer porudzbinaId) {
+
+        return porudzbinaRepo.findById(porudzbinaId)
+                .map(porudzinaMapper :: uResponse)
+                .orElseThrow(() -> new EntityNotFoundException("Ne postoji porudzbina sa tim ID " + porudzbinaId));
+
     }
 }
