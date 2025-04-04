@@ -3,6 +3,8 @@ package com.porudzbina;
 
 import com.porudzbina.Kafka.PorudzbinaProducer;
 import com.porudzbina.Kafka.PotvrdaPorudzbine;
+import com.porudzbina.Placanje.PlacanjeKlijent;
+import com.porudzbina.Placanje.PlacanjeReq;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,10 @@ public class PorudzbinaService {
     @Autowired
     private PorudzbinaProducer producer;
 
+    @Autowired
+
+    private PlacanjeKlijent placanjeKlijent;
+
 
 
 
@@ -65,8 +71,16 @@ public class PorudzbinaService {
         }
 
 
+        PlacanjeReq novoPlacanje = new PlacanjeReq(
+                porudzbinaReq.ukupnaCena(),
+                porudzbinaReq.nacinPlacanja(),
+                porudzbina.getId(),
+                porudzbina.getReferenca(),
+                korisnik
+        );
 
-        //// dodati placanje kasnije
+        placanjeKlijent.zatraziPlacanjePorudzbine(novoPlacanje);
+
 
 
 
