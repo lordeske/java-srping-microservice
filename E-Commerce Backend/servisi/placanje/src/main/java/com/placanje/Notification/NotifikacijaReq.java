@@ -14,7 +14,7 @@ public record NotifikacijaReq
 
                 String imeKorisnika,
 
-                String prezimeKorisnika,
+                String prezimeKoirsnika,
 
                 String emailKorisnika
 
