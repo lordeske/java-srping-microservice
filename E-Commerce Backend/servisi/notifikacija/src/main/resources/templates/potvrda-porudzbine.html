@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Potvrda Porudžbine</title>
+</head>
+<body>
+<h2>Zdravo <span th:text="${imeKorisnika}">Korisnik</span>,</h2>
+
+<p>Vaša porudžbina je uspešno primljena!</p>
+
+<p>Referenca porudžbine: <strong th:text="${referencaPorudzbine}">REF123</strong></p>
+<p>Ukupna cena: <strong th:text="${ukupnaCena}">0.00 RSD</strong></p>
+
+<h3>Pregled proizvoda:</h3>
+<ul>
+    <li th:each="proizvod : ${proizvodi}">
+        <span th:text="${proizvod.naziv}">Naziv proizvoda</span> -
+        <span th:text="${proizvod.kolicina}">1</span> kom -
+        <span th:text="${proizvod.cena}">0.00 RSD</span>
+    </li>
+</ul>
+
+<p>Potvrda je poslata na: <em th:text="${destinacijaEmaila}">example@example.com</em></p>
+
+<br>
+<p>Hvala Vam na poverenju!</p>
+<p>Vaš E-Commerce tim</p>
+</body>
+</html>

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Potvrda Plaćanja</title>
+</head>
+<body>
+<h2>Poštovani <span th:text="${imeKorisnika}">Korisnik</span>,</h2>
+
+<p>Uspešno ste izvršili plaćanje porudžbine sa referencom: <strong th:text="${referencaPorudzbine}">REF123</strong>.</p>
+
+<p>Ukupna cena: <strong th:text="${ukupnaCena}">0.00 RSD</strong></p>
+
+<p>Ova potvrda je poslata na Vaš email: <em th:text="${destinacijaEmaila}">example@example.com</em></p>
+
+<br>
+<p>Hvala Vam na kupovini!</p>
+<p>Srdačno,<br>Vaš E-Commerce tim</p>
+</body>
+</html>
