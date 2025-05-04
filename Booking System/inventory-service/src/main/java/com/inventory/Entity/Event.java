@@ -1,10 +1,12 @@
-package com.inventory.Entity;
+package com.inventory.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.math.BigDecimal;
 
 
 @AllArgsConstructor
@@ -31,4 +33,8 @@ public class Event {
     @ManyToOne
     @JoinColumn(name = "venue_id")
     private Venue venue;
+
+    @Column(name = "ticket_price")
+    private BigDecimal ticketPrice;
+
 }

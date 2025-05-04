@@ -1,8 +1,8 @@
 package com.inventory.service;
 
 
-import com.inventory.Entity.Event;
-import com.inventory.Entity.Venue;
+import com.inventory.entity.Event;
+import com.inventory.entity.Venue;
 import com.inventory.mapper.InventoryMapper;
 import com.inventory.repository.EventRepo;
 import com.inventory.repository.VenueRepo;
@@ -47,6 +47,17 @@ public class InventoryService {
 
         return mapper.inLocationInventoryResponse(venue);
 
+
+    }
+
+    public EventInventoryResponse getEventById(Long eventId) {
+
+        Event event = eventRepo.findById(eventId)
+                .orElseThrow(()-> new EntityNotFoundException("Ne postoji Event sa ID: " + eventId));
+
+
+
+        return mapper.inEventResponse(event);
 
     }
 }

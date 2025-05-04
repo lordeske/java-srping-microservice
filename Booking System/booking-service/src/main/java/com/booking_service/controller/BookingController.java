@@ -1,7 +1,7 @@
 package com.booking_service.controller;
 
 
-import com.booking_service.BookingService;
+import com.booking_service.service.BookingService;
 import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ public class BookingController {
 
 
     @Autowired
-    BookingService bookingService;
+    private BookingService bookingService;
 
 
     @PostMapping("/booking")

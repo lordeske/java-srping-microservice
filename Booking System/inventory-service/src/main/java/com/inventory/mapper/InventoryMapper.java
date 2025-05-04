@@ -1,13 +1,11 @@
 package com.inventory.mapper;
 
 
-import com.inventory.Entity.Event;
-import com.inventory.Entity.Venue;
+import com.inventory.entity.Event;
+import com.inventory.entity.Venue;
 import com.inventory.response.EventInventoryResponse;
 import com.inventory.response.LocationInventoryResponse;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class InventoryMapper {
@@ -20,7 +18,7 @@ public class InventoryMapper {
                 .eventId(event.getId())
                 .capacity(event.getTotalCapacity())
                 .venue(event.getVenue())
-                .ticketPrice(null)
+                .ticketPrice(event.getTicketPrice())
                 .event(event.getName())
                 .build();
 

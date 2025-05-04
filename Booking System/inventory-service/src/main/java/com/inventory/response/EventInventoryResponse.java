@@ -1,10 +1,7 @@
 package com.inventory.response;
 
-import com.inventory.Entity.Venue;
-import lombok.AllArgsConstructor;
+import com.inventory.entity.Venue;
 import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 

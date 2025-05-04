@@ -24,7 +24,7 @@ public class InventoryController {
     InventoryService inventoryService;
 
     @GetMapping("/events")
-    public ResponseEntity<List<EventInventoryResponse>> inventoryGetAllEvents()
+    public ResponseEntity<List<EventInventoryResponse>> getAllEvents()
     {
 
 
@@ -33,15 +33,26 @@ public class InventoryController {
 
 
     @GetMapping("/venue/{venueId}")
-    public ResponseEntity<LocationInventoryResponse> invntoryByVenueId
+    public ResponseEntity<LocationInventoryResponse> getVenueById
             (
                     @PathVariable("venueId") Long venueId
             )
     {
 
-        return ResponseEntity.ok(inventoryService.getVenueInformation(venueId)) ;
+        return ResponseEntity.ok(inventoryService.getVenueInformation(venueId));
 
     }
+
+    @GetMapping("/events/{eventId}")
+    public ResponseEntity<EventInventoryResponse> getEventById
+            (@PathVariable("eventId") Long eventId)
+    {
+
+        return  ResponseEntity.ok(inventoryService.getEventById(eventId));
+    }
+
+
+
 
 
 
