@@ -8,10 +8,7 @@ import com.inventory.response.LocationInventoryResponse;
 import com.inventory.service.InventoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,7 +49,15 @@ public class InventoryController {
     }
 
 
+    @PutMapping("event/{eventId}/capacity/{capacity}")
+    public ResponseEntity<Boolean> updateEventCapacity
+            (@PathVariable("eventId") Long eventId,
+             @PathVariable("capacity") Long ticketBooked)
+    {
 
+
+        return ResponseEntity.ok(inventoryService.updateEventCapacity(eventId,ticketBooked));
+    }
 
 
 

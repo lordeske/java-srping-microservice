@@ -60,4 +60,27 @@ public class InventoryService {
         return mapper.inEventResponse(event);
 
     }
+
+    public Boolean updateEventCapacity(Long eventId, Long ticketCount) {
+
+        Event event = eventRepo.findById(eventId)
+                .orElseThrow(()-> new EntityNotFoundException("Ne postoji Event sa ID: " + eventId));
+
+
+
+        Long remainingCapacity  = event.getLeftCapacity() - ticketCount;
+
+        if(remainingCapacity  < 0)
+        {
+            throw new RuntimeException("Izabrao si previse tiketa nema toliko kapaciteta");
+
+        }
+
+        event.setLeftCapacity(remainingCapacity );
+
+        eventRepo.save(event);
+
+
+        return true;
+    }
 }
