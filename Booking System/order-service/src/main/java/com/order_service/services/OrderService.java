@@ -4,10 +4,12 @@ package com.order_service.services;
 import com.order_service.client.InventoryClient;
 import com.order_service.entity.Order;
 import com.order_service.event.BookingEvent;
+import com.order_service.event.OrderCreatedEvent;
 import com.order_service.repository.OrderRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +24,12 @@ public class OrderService {
     @Autowired
     private InventoryClient inventoryClient;
 
+
+    @Autowired
+    private KafkaTemplate<String, OrderCreatedEvent> kafkaTemplate;
+
+
+
     @KafkaListener(topics = "booking", groupId = "order-service")
     public void orderEvent(BookingEvent bookingEvent)
     {
@@ -32,21 +40,38 @@ public class OrderService {
         orderRepository.save(order);
 
 
+
+
+
         /// Azuriranje statusa Eventa
         boolean isEventUpdated =  inventoryClient.updateEventCapacity
                 (bookingEvent.getEventId(),bookingEvent.getTicketCount())
                 .getBody();
 
-        if(!isEventUpdated)
-        {
-           throw new RuntimeException("Nije moguce azurirati evenID: "+ bookingEvent.getEventId()+
-                   " previse si karti izabrao" );
 
+
+        if (!isEventUpdated) {
+            log.error("Nema dovoljno mesta, šaljem FAILED status");
+            kafkaTemplate.send("booking-status", new OrderCreatedEvent(
+                    bookingEvent.getBookingId(),
+                    null,
+                    "FAILED"
+            ));
+            return;
         }
+
 
         log.info("Izvresn update eventaId: "+ bookingEvent.getEventId()+ " rezerisani : "+ bookingEvent.getTicketCount()+ " tiketa" );
 
 
+        OrderCreatedEvent confirmation = new OrderCreatedEvent(
+                bookingEvent.getBookingId(),
+                order.getId(),
+                "CONFIRMED"
+        );
+
+        kafkaTemplate.send("booking-status", confirmation);
+        log.info("Poslat orderCreatedEvent nazad : {}", confirmation);
 
 
     }

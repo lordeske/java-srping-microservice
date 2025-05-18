@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 
 import org.springframework.web.servlet.function.RequestPredicates;
 import org.springframework.web.servlet.function.RouterFunction;
+import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 
 import java.net.URI;
@@ -23,16 +24,28 @@ public class BookingServiceRoute {
     @Bean
     public RouterFunction<ServerResponse> bookingRoutes() {
         return GatewayRouterFunctions.route("booking-service")
-                .route(RequestPredicates.POST("/api/v1/booking"),
-                        HandlerFunctions.http("http://localhost:8081/api/v1/booking"))
-                .filter(
-                        CircuitBreakerFilterFunctions.circuitBreaker(
-                                "bookingServiceCircuitBreaker",
-                                URI.create("forward:/fallbackRoute")
-                        )
+                .nest(RequestPredicates.path("/api/v1/booking"),
+                        builder -> builder
+                                .route(RequestPredicates.POST(""),
+                                        HandlerFunctions.http("http://localhost:8081/api/v1/booking"))
+                                .route(RequestPredicates.GET("/{id}"),
+                                        request -> {
+                                            String id = request.pathVariable("id");
+                                            return HandlerFunctions.http(
+                                                    URI.create("http://localhost:8081/api/v1/booking/" + id)
+                                            ).handle(request);
+                                        })
+                                .filter(CircuitBreakerFilterFunctions.circuitBreaker(
+                                        "bookingServiceCircuitBreaker",
+                                        URI.create("forward:/fallbackRoute")
+                                ))
                 )
                 .build();
     }
+
+
+
+
 
     @Bean
     public RouterFunction<ServerResponse> bookingServiceApiDocs()
@@ -62,6 +75,8 @@ public class BookingServiceRoute {
                 .build();
 
     }
+
+
 
 
 

@@ -34,6 +34,10 @@ public class Order {
     @Column(name = "placed_at" , updatable = false)
     private LocalDateTime placedAt;
 
+    @Column(name = "booking_id")
+    private Long bookingId;
+
+
     @Column(name = "customer_id")
     private Long customerId;
 

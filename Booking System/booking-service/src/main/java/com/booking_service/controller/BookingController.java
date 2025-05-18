@@ -1,14 +1,15 @@
 package com.booking_service.controller;
 
 
+import com.booking_service.response.BookingStatusResponse;
 import com.booking_service.service.BookingService;
 import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import static org.springframework.http.ResponseEntity.ok;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -28,6 +29,18 @@ public class BookingController {
 
 
         return bookingService.createBooking(bookingRequest);
+
+    }
+
+    @GetMapping("booking/{id}")
+    public ResponseEntity<BookingStatusResponse>  getBookingStatus(
+            @PathVariable Long id
+    )
+    {
+
+
+
+       return ResponseEntity.ok(bookingService.getBookingStatus(id));
 
     }
 

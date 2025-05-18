@@ -60,6 +60,15 @@ services:
     networks:
       - microservices-net
 
+  mail-dev:
+    container_name: ms-mail-dev
+    image: maildev/maildev
+    ports:
+      - 1080:1080
+      - 1025:1025
+    networks:
+      - microservices-net
+
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:latest
@@ -101,6 +110,8 @@ services:
       MYSQL_PASSWORD: password
     networks:
       - microservices-net
+
+
 
   keycloak:
     container_name: keycloak
