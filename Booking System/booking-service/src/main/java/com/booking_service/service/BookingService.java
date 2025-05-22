@@ -5,12 +5,14 @@ import com.booking_service.entity.Booking;
 import com.booking_service.entity.Customer;
 import com.booking_service.event.BookingEvent;
 import com.booking_service.event.OrderCreatedEvent;
+import com.booking_service.mail.EmailService;
 import com.booking_service.repository.BookingRepository;
 import com.booking_service.repository.CustomerRepository;
 import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
 import com.booking_service.response.BookingStatusResponse;
 import com.booking_service.response.EventResponse;
+import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,12 @@ public class BookingService {
 
     @Autowired
     private KafkaTemplate<String, BookingEvent> kafkaTemplate;
+
+    @Autowired
+    private EmailService emailService;
+
+
+
 
 
     public BookingResponse createBooking(BookingRequest bookingRequest) {
@@ -108,8 +116,7 @@ public class BookingService {
 
 
     @KafkaListener(topics = "booking-status", groupId = "booking-service")
-    public void updateBookingStatusListener(OrderCreatedEvent confirmation)
-    {
+    public void updateBookingStatusListener(OrderCreatedEvent confirmation) throws Exception {
 
         Booking booking = bookingRepository.findById(confirmation.getBookingId())
                 .orElseThrow(() -> new EntityNotFoundException("Booking  sa ID: " + confirmation.getBookingId() +
@@ -119,6 +126,21 @@ public class BookingService {
         booking.setOrderId(confirmation.getOrderId());
 
         bookingRepository.save(booking);
+
+
+        Customer customer = customerRepository.findById(booking.getCustomerId()).orElseThrow(
+                ()-> new EntityNotFoundException("Korisnik nije pronadjen ID: " + booking.getCustomerId())
+        );
+
+
+        emailService.sendConfirmationEmail(
+                customer.getEmail(),
+                customer.getName(),
+                booking.getTotalPrice(),
+                booking.getOrderId()
+        );
+
+
 
 
     }
