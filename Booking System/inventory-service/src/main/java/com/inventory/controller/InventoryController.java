@@ -49,7 +49,7 @@ public class InventoryController {
     }
 
 
-    @PutMapping("event/{eventId}/capacity/{capacity}")
+    @PutMapping("events/{eventId}/capacity/{capacity}")
     public ResponseEntity<Boolean> updateEventCapacity
             (@PathVariable("eventId") Long eventId,
              @PathVariable("capacity") Long ticketBooked)
@@ -59,6 +59,19 @@ public class InventoryController {
         return ResponseEntity.ok(inventoryService.updateEventCapacity(eventId,ticketBooked));
     }
 
+
+    @PostMapping("/events/increase/{eventId}/capacity/{capacity}")
+    boolean increaseCapacity(
+            @PathVariable("eventId") Long eventId,
+            @PathVariable("capacity") Long capacity
+
+    )
+    {
+
+
+
+        return  inventoryService.increaseCapacity(eventId, capacity);
+    }
 
 
 

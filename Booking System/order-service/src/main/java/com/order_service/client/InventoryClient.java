@@ -11,7 +11,7 @@ public interface InventoryClient {
 
 
 
-    @PutMapping("event/{eventId}/capacity/{capacity}")
+    @PutMapping("events/{eventId}/capacity/{capacity}")
     ResponseEntity<Boolean> updateEventCapacity
             (@PathVariable("eventId") Long eventId,
              @PathVariable("capacity") Long ticketBooked);

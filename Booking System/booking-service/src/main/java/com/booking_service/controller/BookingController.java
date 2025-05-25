@@ -5,6 +5,7 @@ import com.booking_service.response.BookingStatusResponse;
 import com.booking_service.service.BookingService;
 import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class BookingController {
 
     }
 
-    @GetMapping("booking/{id}")
+    @GetMapping("/booking/{id}")
     public ResponseEntity<BookingStatusResponse>  getBookingStatus(
             @PathVariable Long id
     )
@@ -44,6 +45,15 @@ public class BookingController {
 
     }
 
+    @DeleteMapping("/booking/{id}")
+    public ResponseEntity<Boolean> cancelBooking(
+            @PathVariable Long id
+    ) throws MessagingException {
+
+
+
+        return ResponseEntity.ok(bookingService.cancelBooking(id));
+    }
 
 
 

@@ -83,4 +83,20 @@ public class InventoryService {
 
         return true;
     }
+
+    public boolean increaseCapacity(Long eventId, Long capacity) {
+
+        Event event = eventRepo.findById(eventId)
+                .orElseThrow(()-> new EntityNotFoundException("Ne postoji Event sa ID: " + eventId));
+
+
+        Long increasedCapacity = event.getLeftCapacity() + capacity;
+
+        event.setLeftCapacity(increasedCapacity);
+
+        eventRepo.save(event);
+
+        return true;
+
+    }
 }

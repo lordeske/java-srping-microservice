@@ -115,6 +115,47 @@ public class BookingService {
     }
 
 
+
+    public Boolean cancelBooking(Long id) throws MessagingException {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(()-> new EntityNotFoundException("Ne postojim booking sa ID: "+ id));
+
+
+
+        if(booking.getStatus().equals("CANCELED") || booking.getStatus().equals("FAILED"))
+        {
+            return false;
+        }
+
+        boolean success =  inventoryClient.increaseCapacity(booking.getEventId(), booking.getTicketCount());
+
+        if(!success)
+        {
+            return false;
+        }
+
+        booking.setStatus("CANCELED");
+        bookingRepository.save(booking);
+
+
+
+        Customer customer = customerRepository.findById(booking.getCustomerId())
+                        .orElseThrow(()->
+                                new EntityNotFoundException("Nema korisnika sa ID: "+ booking.getCustomerId()));
+
+        emailService.sendCancelationEmail(
+                booking.getOrderId(),
+                customer
+
+        );
+
+
+
+
+        return true;
+    }
+
     @KafkaListener(topics = "booking-status", groupId = "booking-service")
     public void updateBookingStatusListener(OrderCreatedEvent confirmation) throws Exception {
 
@@ -133,17 +174,30 @@ public class BookingService {
         );
 
 
+
+
+        String qrContent = formatQRContent(booking, inventoryClient.getEvent(
+                    booking.getEventId()),
+                        customer.getName());
+
         emailService.sendConfirmationEmail(
                 customer.getEmail(),
-                customer.getName(),
-                booking.getTotalPrice(),
-                booking.getOrderId()
+                    customer.getName(),
+                     booking.getTotalPrice(),
+                        qrContent,
+                            booking.getOrderId()
         );
 
 
 
 
     }
+
+
+
+
+
+
 
 
     public BookingStatusResponse getBookingStatus(Long id) {
@@ -165,4 +219,41 @@ public class BookingService {
 
 
     }
+
+    public String formatQRContent(Booking booking, EventResponse event, String customerName)
+    {
+
+        String eventName = event.getEvent();
+        String venue  = event.getVenue().name();
+
+
+
+        return """
+            Rezervacija potvrdjena!
+
+            Vlasnik : %s
+
+            Događaj: %s
+           
+            Mesto: %s
+
+            Broj karata: %d
+            Ukupna cena: %.2f RSD
+            Booking ID: %d
+            """.formatted(
+                customerName,
+                eventName,
+
+                venue,
+                booking.getTicketCount(),
+                booking.getTotalPrice(),
+                booking.getId());
+
+
+
+
+    }
+
+
+
 }

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Potvrda rezervacije</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h2 {
+            color: #2563eb;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Zdravo <span th:text="${imeKorisnika}">Ime</span>,</h2>
+    <p>Tvoje karte za rezervaciju su ponistene</p>
+
+
+    <p><strong>Broj porudzbine:</strong> <span th:text="${referencaPorudzbine}">ORD-1234</span></p>
+
+
+
+    <p>Zao nam je sto se ovo desilo! Pozdrav</p>
+
+    <div class="footer">
+        Ovo je automatski generisana poruka. Ne odgovaraj na ovaj mejl.
+    </div>
+</div>
+</body>
+</html>

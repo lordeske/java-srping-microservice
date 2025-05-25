@@ -1,6 +1,7 @@
 package com.booking_service.mail;
 
 
+import com.booking_service.entity.Customer;
 import com.booking_service.service.QrCodeService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -35,14 +36,13 @@ public class EmailService {
 
 
     @Async
-    public void sendConfirmationEmail(String to, String name, BigDecimal total,
-                                      Long orderRef) throws Exception {
+    public void sendConfirmationEmail(String to, String name, BigDecimal total, String qrContent, Long orderRef) throws Exception {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
         byte[] qrBytes = qrCodeService.generateQrCode(
-                "Referenca ID: " + orderRef.toString(), 300, 300);
+                qrContent , 300, 300);
 
         String qrImageBase64 = Base64.getEncoder().encodeToString(qrBytes);
 
@@ -68,6 +68,23 @@ public class EmailService {
     }
 
 
+    public void sendCancelationEmail(Long orderId, Customer customer) throws MessagingException {
+
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
 
 
+        Context context = new Context();
+        context.setVariable("imeKorisnika", customer.getName());
+        context.setVariable("referencaPorudzbine" , orderId);
+
+        String htmlContent = templateEngine.process("cancelation",context );
+
+        helper.setTo(customer.getEmail());
+        helper.setSubject("Potvrda odustanka od rezervacije");
+        helper.setText(htmlContent, true);
+
+        mailSender.send(message);
+
+    }
 }
