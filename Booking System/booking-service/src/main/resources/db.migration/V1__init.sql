@@ -8,3 +8,6 @@ CREATE TABLE customer (
 INSERT INTO customer (name, email, address) VALUES
 ('Pera Perić', 'pera@example.com', 'Knez Mihailova 1'),
 ('Mika Mikić', 'mika@example.com', 'Nemanjina 10');
+
+
+

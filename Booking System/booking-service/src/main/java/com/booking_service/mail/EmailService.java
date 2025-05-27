@@ -68,6 +68,7 @@ public class EmailService {
     }
 
 
+    @Async
     public void sendCancelationEmail(Long orderId, Customer customer) throws MessagingException {
 
         MimeMessage message = mailSender.createMimeMessage();

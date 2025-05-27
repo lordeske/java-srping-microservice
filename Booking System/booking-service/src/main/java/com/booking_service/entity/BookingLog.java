@@ -6,31 +6,35 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.cglib.core.Local;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "bookings")
 @Data
-@NoArgsConstructor
+@Table(name = "booking_logs")
 @AllArgsConstructor
-public class Booking {
+@NoArgsConstructor
+@Builder
+@Entity
+public class BookingLog {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long customerId;
-    private Long eventId;
-    private Long ticketCount;
-    private BigDecimal totalPrice;
+    private Long bookingId;
 
     private String status;
 
-    private Long orderId;
+    private String action;
+
+    private LocalDateTime timestamp;
+
+    private String description;
 
 
-    @Column(name = "checked_in")
-    private Boolean checkedIn = false;
+
+
 
 }

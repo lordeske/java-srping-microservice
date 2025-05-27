@@ -2,10 +2,13 @@ package com.booking_service.service;
 
 import com.booking_service.client.InventoryClient;
 import com.booking_service.entity.Booking;
+import com.booking_service.entity.BookingLog;
 import com.booking_service.entity.Customer;
 import com.booking_service.event.BookingEvent;
 import com.booking_service.event.OrderCreatedEvent;
+import com.booking_service.logger.BookingLogger;
 import com.booking_service.mail.EmailService;
+import com.booking_service.repository.BookingLogRepository;
 import com.booking_service.repository.BookingRepository;
 import com.booking_service.repository.CustomerRepository;
 import com.booking_service.request.BookingRequest;
@@ -21,6 +24,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Service
 @Slf4j
@@ -43,6 +47,12 @@ public class BookingService {
     private EmailService emailService;
 
 
+    @Autowired
+    private BookingLogRepository bookingLogRepository;
+
+
+    @Autowired
+    private BookingLogger bookingLogger;
 
 
 
@@ -98,6 +108,7 @@ public class BookingService {
         kafkaTemplate.send("booking" , bookingEvent);
 
 
+        bookingLogger.logCreation(booking);
 
 
 
@@ -151,6 +162,7 @@ public class BookingService {
         );
 
 
+        bookingLogger.logCancelation(booking);
 
 
         return true;
@@ -165,6 +177,9 @@ public class BookingService {
 
         booking.setStatus(confirmation.getStatus());
         booking.setOrderId(confirmation.getOrderId());
+
+
+        bookingLogger.logConfirmed(booking);
 
         bookingRepository.save(booking);
 
@@ -256,4 +271,34 @@ public class BookingService {
 
 
 
+
+
+
+    public Boolean validateBooking(Long id) {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Booking  sa ID: " + id +
+                        " ne postoji"));
+
+
+        if(booking.getStatus().equals("CONFIRMED") || !booking.getCheckedIn())
+        {
+
+            booking.setCheckedIn(true);
+            bookingRepository.save(booking);
+            bookingLogger.logCheckedIn(booking);
+
+
+            return true;
+
+
+        }
+        else
+        {
+            return false;
+        }
+
+
+
+    }
 }

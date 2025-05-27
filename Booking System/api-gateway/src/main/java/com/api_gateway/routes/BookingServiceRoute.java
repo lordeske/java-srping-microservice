@@ -28,6 +28,14 @@ public class BookingServiceRoute {
                         builder -> builder
                                 .route(RequestPredicates.POST(""),
                                         HandlerFunctions.http("http://localhost:8081/api/v1/booking"))
+
+                                .route(RequestPredicates.DELETE("/{id}"),
+                                        request -> {
+                                        String id = request.pathVariable("id");
+                                        return  HandlerFunctions.http(
+                                                URI.create("http://localhost:8081/api/v1/booking/" + id)
+                                        ).handle(request); })
+
                                 .route(RequestPredicates.GET("/{id}"),
                                         request -> {
                                             String id = request.pathVariable("id");

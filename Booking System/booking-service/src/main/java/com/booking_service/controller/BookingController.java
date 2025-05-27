@@ -1,7 +1,9 @@
 package com.booking_service.controller;
 
 
+import com.booking_service.entity.BookingLog;
 import com.booking_service.response.BookingStatusResponse;
+import com.booking_service.service.BookingLogsService;
 import com.booking_service.service.BookingService;
 import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
@@ -9,6 +11,8 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.ResponseEntity.ok;
 
@@ -22,11 +26,9 @@ public class BookingController {
 
 
     @PostMapping("/booking")
-    public BookingResponse createBooking (
+    public BookingResponse createBooking(
             @RequestBody BookingRequest bookingRequest
-    )
-    {
-
+    ) {
 
 
         return bookingService.createBooking(bookingRequest);
@@ -34,14 +36,12 @@ public class BookingController {
     }
 
     @GetMapping("/booking/{id}")
-    public ResponseEntity<BookingStatusResponse>  getBookingStatus(
+    public ResponseEntity<BookingStatusResponse> getBookingStatus(
             @PathVariable Long id
-    )
-    {
+    ) {
 
 
-
-       return ResponseEntity.ok(bookingService.getBookingStatus(id));
+        return ResponseEntity.ok(bookingService.getBookingStatus(id));
 
     }
 
@@ -51,9 +51,21 @@ public class BookingController {
     ) throws MessagingException {
 
 
-
         return ResponseEntity.ok(bookingService.cancelBooking(id));
     }
+
+
+    @PostMapping("/booking/check-in/{id}")
+    public ResponseEntity<Boolean> validateBooking(
+            @PathVariable Long id
+    )
+    {
+
+
+
+       return ResponseEntity.ok(bookingService.validateBooking(id));
+    }
+
 
 
 
