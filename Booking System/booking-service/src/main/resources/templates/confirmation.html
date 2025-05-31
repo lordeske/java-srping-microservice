@@ -1,48 +1,30 @@
 <!DOCTYPE html>
-<html lang="sr" xmlns:th="http://www.w3.org/1999/xhtml">
+<html xmlns:th="http://www.thymeleaf.org" lang="sr">
 <head>
     <meta charset="UTF-8">
     <title>Potvrda rezervacije</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f9fafb;
-            color: #111827;
-            padding: 20px;
-        }
-        .container {
-            max-width: 600px;
-            background-color: #ffffff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-        }
-        h2 {
-            color: #2563eb;
-        }
-        .footer {
-            margin-top: 30px;
-            font-size: 13px;
-            color: #6b7280;
-        }
-    </style>
 </head>
-<body>
-<div class="container">
-    <h2>Zdravo <span th:text="${imeKorisnika}">Ime</span>,</h2>
-    <p>Hvala ti što si rezervisao kartu za dogadjaj.</p>
+<body style="font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px;">
+<div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <h2 style="color: #2B256D;">Zdravo, <span th:text="${imeKorisnika}">Korisnik</span>!</h2>
 
-    <p><strong>Ukupna cena:</strong> <span th:text="${ukupnaCena}">1000</span> RSD</p>
-    <p><strong>Broj porudzbine:</strong> <span th:text="${referencaPorudzbine}">ORD-1234</span></p>
-    <p><strong>QR Kod:</strong></p>
-    <img th:src="${qrImage}" alt="QR kod karte" width="200" src=""/>
+    <p>Uspesno ste rezervisali karte za dogadjaj</p>
 
+    <p><strong>Vasa rezervacija je potvrđena</strong>, ali ceka se uplata kako bi postala aktivna.</p>
 
-    <p>Uskoro ćemo ti poslati vise informacija. Vidimo se!</p>
+    <p>Detalji rezervacije:</p>
+    <ul>
+        <li><strong>Broj rezervacije:</strong> <span th:text="${bookingId}">12345</span></li>
+        <li><strong>Ukupna cena:</strong> <span th:text="${cena}">1200.00</span> RSD</li>
+    </ul>
 
-    <div class="footer">
-        Ovo je automatski generisana poruka. Ne odgovaraj na ovaj mejl.
+    <div style="margin-top: 20px;">
+        <p>Za finalizaciju rezervacije i dobijanje vaše karte, kliknite na link ispod:</p>
+        <a th:href="${linkZaPlacanje}">Plati sada</a>
+
     </div>
+
+    <p style="margin-top: 30px;">Hvala vam na poverenju!<br>Vaš tim</p>
 </div>
 </body>
 </html>

@@ -34,9 +34,32 @@ public class EmailService {
     @Autowired
     private QrCodeService qrCodeService;
 
+    @Async
+    public void sendConfirmationEmail(String to, String name, BigDecimal total, Long bookingId) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
+
+        Context context = new Context();
+        context.setVariable("imeKorisnika", name);
+        context.setVariable("bookingId", bookingId);
+        context.setVariable("cena", total);
+        context.setVariable("linkZaPlacanje", "http://localhost:8081/api/v1/booking/pay/" + bookingId);
+
+
+
+        String htmlContent = templateEngine.process("confirmation", context);
+
+        helper.setTo(to);
+        helper.setSubject("Rezervacija uspešno kreirana – Potrebno plaćanje");
+        helper.setText(htmlContent, true);
+
+        mailSender.send(message);
+    }
+
+
 
     @Async
-    public void sendConfirmationEmail(String to, String name, BigDecimal total, String qrContent, Long orderRef) throws Exception {
+    public void sendPaidEmail(String to, String name, BigDecimal total, String qrContent, Long orderRef) throws Exception {
 
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, StandardCharsets.UTF_8.name());
@@ -54,11 +77,11 @@ public class EmailService {
         context.setVariable("referencaPorudzbine", orderRef);
         context.setVariable("qrImage", "data:image/png;base64," + qrImageBase64);
 
-        String htmlContent = templateEngine.process("confirmation", context);
+        String htmlContent = templateEngine.process("finalize", context);
 
 
         helper.setTo(to);
-        helper.setSubject("Potvrda rezervacije");
+        helper.setSubject("Finalizacija rezervacije");
         helper.setText(htmlContent, true);
         helper.setFrom("noreply@eske.local");
 

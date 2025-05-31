@@ -3,6 +3,7 @@ package com.booking_service.service;
 import com.booking_service.client.InventoryClient;
 import com.booking_service.entity.Booking;
 import com.booking_service.entity.BookingLog;
+import com.booking_service.entity.BookingStatus;
 import com.booking_service.entity.Customer;
 import com.booking_service.event.BookingEvent;
 import com.booking_service.event.OrderCreatedEvent;
@@ -82,7 +83,7 @@ public class BookingService {
         //// Kreiranje inicijalnog  Bookinga
         Booking booking = new Booking();
         booking.setCustomerId(customer.getId());
-        booking.setStatus("PENDING");
+        booking.setStatus(BookingStatus.PENDING);
         booking.setEventId(event.getEventId());
         booking.setTicketCount(bookingRequest.getTicketCount());
         booking.setTotalPrice(event.getTicketPrice().multiply(BigDecimal.valueOf(bookingRequest.getTicketCount())));
@@ -134,7 +135,7 @@ public class BookingService {
 
 
 
-        if(booking.getStatus().equals("CANCELED") || booking.getStatus().equals("FAILED"))
+        if(booking.getStatus().equals(BookingStatus.CANCELED) || booking.getStatus().equals(BookingStatus.FAILED))
         {
             return false;
         }
@@ -146,7 +147,7 @@ public class BookingService {
             return false;
         }
 
-        booking.setStatus("CANCELED");
+        booking.setStatus(BookingStatus.CANCELED);
         bookingRepository.save(booking);
 
 
@@ -191,16 +192,11 @@ public class BookingService {
 
 
 
-        String qrContent = formatQRContent(booking, inventoryClient.getEvent(
-                    booking.getEventId()),
-                        customer.getName());
-
         emailService.sendConfirmationEmail(
                 customer.getEmail(),
                     customer.getName(),
                      booking.getTotalPrice(),
-                        qrContent,
-                            booking.getOrderId()
+                        booking.getId()
         );
 
 
@@ -227,7 +223,7 @@ public class BookingService {
                 booking.getEventId(),
                 booking.getTicketCount(),
                 booking.getTotalPrice(),
-                booking.getStatus(),
+                booking.getStatus().toString(),
                 booking.getOrderId()
         );
 
@@ -280,11 +276,18 @@ public class BookingService {
                 .orElseThrow(() -> new EntityNotFoundException("Booking  sa ID: " + id +
                         " ne postoji"));
 
+        if(booking.getStatus().equals(BookingStatus.CHECKED_IN))
+        {
 
-        if(booking.getStatus().equals("CONFIRMED") || !booking.getCheckedIn())
+            throw new IllegalStateException("Korisnik je vec cekiran");
+        }
+
+
+        if(booking.getStatus() == BookingStatus.PAID)
         {
 
             booking.setCheckedIn(true);
+            booking.setStatus(BookingStatus.CHECKED_IN);
             bookingRepository.save(booking);
             bookingLogger.logCheckedIn(booking);
 
@@ -297,6 +300,50 @@ public class BookingService {
         {
             return false;
         }
+
+
+
+    }
+
+    public Boolean simulatePayment(Long id) throws Exception {
+
+        Booking booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Booking  sa ID: " + id +
+                        " ne postoji"));
+
+        if(booking.getStatus().equals(BookingStatus.CONFIRMED))
+        {
+
+            booking.setStatus(BookingStatus.PAID);
+            bookingRepository.save(booking);
+            bookingLogger.logPayment(booking);
+
+            Customer customer = customerRepository.findById(booking.getCustomerId()).orElseThrow(
+                    ()-> new EntityNotFoundException("Korisnik nije pronadjen ID: " + booking.getCustomerId())
+            );
+
+
+            String qrContent = formatQRContent(booking, inventoryClient.getEvent(
+                    booking.getEventId()),
+                       customer.getName());
+
+            emailService.sendPaidEmail(
+                    customer.getEmail(),
+                    customer.getName(),
+                    booking.getTotalPrice(),
+                    qrContent,
+                    booking.getOrderId()
+            );
+
+            return true;
+
+        }
+        else
+        {
+            throw new Exception("Ne mozes da platis nevalidnu rezervaciju");
+        }
+
+
 
 
 

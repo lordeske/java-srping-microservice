@@ -9,6 +9,7 @@ import com.booking_service.request.BookingRequest;
 import com.booking_service.response.BookingResponse;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,6 +66,22 @@ public class BookingController {
 
        return ResponseEntity.ok(bookingService.validateBooking(id));
     }
+
+
+    @GetMapping("/booking/pay/{id}") /// za test svthe iz linka
+    public ResponseEntity<String> simulatePayment(
+            @PathVariable Long id
+    ) throws Exception {
+
+        boolean success =  bookingService.simulatePayment(id);
+
+        if (success) {
+            return ResponseEntity.ok("Uspesno ste izvrsili uplatu. Vaša karta je aktivna.");
+        } else {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Rezervacija nije potvrdjena ili je placena.");
+        }
+    }
+
 
 
 

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="sr" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Finalizacija rezervacije + karte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9fafb;
+            color: #111827;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        h2 {
+            color: #2563eb;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 13px;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Zdravo <span th:text="${imeKorisnika}">Ime</span>,</h2>
+    <p>Tvoja karta je sada validna mozes je iskoriti skenirajuci kod.</p>
+
+    <p><strong>Ukupna cena:</strong> <span th:text="${ukupnaCena}">1000</span> RSD</p>
+    <p><strong>Broj porudzbine:</strong> <span th:text="${referencaPorudzbine}">ORD-1234</span></p>
+    <p><strong>QR Kod:</strong></p>
+    <img th:src="${qrImage}" alt="QR kod karte" width="200" src=""/>
+
+
+    <p>Vidimo se!</p>
+
+    <div class="footer">
+        Ovo je automatski generisana poruka. Ne odgovaraj na ovaj mejl.
+    </div>
+</div>
+</body>
+</html>

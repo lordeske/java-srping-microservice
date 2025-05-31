@@ -1,6 +1,7 @@
 package com.order_service.event;
 
 
+import com.order_service.entity.BookingStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ public class OrderCreatedEvent {
 
     private Long bookingId;
     private Long orderId;
-    private String status; /// Failed, Confirmed to dvoje
+    private BookingStatus status; /// Failed, Confirmed to dvoje
 
 
 

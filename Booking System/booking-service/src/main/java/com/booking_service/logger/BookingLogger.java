@@ -21,8 +21,8 @@ public class BookingLogger {
         BookingLog bookingLog =  BookingLog.builder()
 
                 .bookingId(booking.getId())
-                .status(booking.getStatus())
-                .action("CREATED")
+                .status(booking.getStatus().toString())
+                .action("CONFIRMED")
                 .description("Rezervacija uspesno napravljena")
                 .timestamp(LocalDateTime.now())
                 .build();
@@ -39,7 +39,7 @@ public class BookingLogger {
         BookingLog bookingLog =  BookingLog.builder()
 
                 .bookingId(booking.getId())
-                .status(booking.getStatus())
+                .status(booking.getStatus().toString())
                 .action("CANCELED")
                 .description("Rezervacija uspesno cancelovana")
                 .timestamp(LocalDateTime.now())
@@ -54,7 +54,7 @@ public class BookingLogger {
     public void logCheckedIn(Booking booking) {
         BookingLog bookingLog = BookingLog.builder()
                 .bookingId(booking.getId())
-                .status(booking.getStatus())
+                .status(booking.getStatus().toString())
                 .action("CHECKED_IN")
                 .description("Korisnik je uspesno cekirao")
                 .timestamp(LocalDateTime.now())
@@ -67,7 +67,7 @@ public class BookingLogger {
     public void logCreation(Booking booking) {
         BookingLog bookingLog = BookingLog.builder()
                 .bookingId(booking.getId())
-                .status(booking.getStatus())
+                .status(booking.getStatus().toString())
                 .action("PENDING")
                 .description("Korisnik je uspesno kreirao Booking")
                 .timestamp(LocalDateTime.now())
@@ -75,6 +75,22 @@ public class BookingLogger {
 
         bookingLogRepository.save(bookingLog);
 
+
+    }
+
+    public void logPayment(Booking booking) {
+
+        BookingLog bookingLog = BookingLog.builder()
+                .bookingId(booking.getId())
+                .bookingId(booking.getId())
+                .status(booking.getStatus().toString())
+                .action("PAID")
+                .description("Korisnik je uspesno plation")
+                .timestamp(LocalDateTime.now())
+                .build();
+
+
+        bookingLogRepository.save(bookingLog);
 
     }
 }

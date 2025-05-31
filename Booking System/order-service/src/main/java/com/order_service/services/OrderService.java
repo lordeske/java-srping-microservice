@@ -2,6 +2,7 @@ package com.order_service.services;
 
 
 import com.order_service.client.InventoryClient;
+import com.order_service.entity.BookingStatus;
 import com.order_service.entity.Order;
 import com.order_service.event.BookingEvent;
 import com.order_service.event.OrderCreatedEvent;
@@ -55,7 +56,7 @@ public class OrderService {
             kafkaTemplate.send("booking-status", new OrderCreatedEvent(
                     bookingEvent.getBookingId(),
                     null,
-                    "FAILED"
+                    BookingStatus.FAILED
             ));
             return;
         }
@@ -67,7 +68,7 @@ public class OrderService {
         OrderCreatedEvent confirmation = new OrderCreatedEvent(
                 bookingEvent.getBookingId(),
                 order.getId(),
-                "CONFIRMED"
+                BookingStatus.CONFIRMED
         );
 
         kafkaTemplate.send("booking-status", confirmation);

@@ -30,6 +30,8 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Greska na serveru: " + ex.getMessage());
     }
 
+
+
     private ResponseEntity<?> buildResponse(HttpStatus status, String message) {
 
         Map<String, Object> body = new HashMap<>();

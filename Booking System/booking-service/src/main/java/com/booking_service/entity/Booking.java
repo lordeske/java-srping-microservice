@@ -25,7 +25,7 @@ public class Booking {
     private Long ticketCount;
     private BigDecimal totalPrice;
 
-    private String status;
+    private BookingStatus status;
 
     private Long orderId;
 
