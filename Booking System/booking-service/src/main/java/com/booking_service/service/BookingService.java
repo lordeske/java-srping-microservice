@@ -20,12 +20,15 @@ import jakarta.mail.MessagingException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @Slf4j
@@ -88,6 +91,7 @@ public class BookingService {
         booking.setTicketCount(bookingRequest.getTicketCount());
         booking.setTotalPrice(event.getTicketPrice().multiply(BigDecimal.valueOf(bookingRequest.getTicketCount())));
         booking.setOrderId(null);
+        booking.setCreatedAt(LocalDateTime.now());
 
         bookingRepository.save(booking);
 
@@ -348,4 +352,30 @@ public class BookingService {
 
 
     }
+
+
+
+    @Scheduled(fixedRate = 60000)
+    public void clearUnpaidBookings()
+    {
+
+        LocalDateTime expirationTime = LocalDateTime.now().minusMinutes(60);
+        List<Booking> expiredBookings = bookingRepository.findByStatusAndCreatedAtBefore(
+                BookingStatus.CONFIRMED, expirationTime);
+
+
+        for (Booking booking : expiredBookings)
+        {
+           booking.setStatus(BookingStatus.CANCELED);
+           bookingRepository.save(booking);
+           bookingLogger.logCancelation(booking);
+
+
+        }
+
+    }
+
+
+
+
 }

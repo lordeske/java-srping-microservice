@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
@@ -24,6 +25,9 @@ public class Booking {
     private Long eventId;
     private Long ticketCount;
     private BigDecimal totalPrice;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
     private BookingStatus status;
 
