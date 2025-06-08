@@ -8,7 +8,7 @@ import lombok.Builder;
 public record UserRegistrationDTO(
 
 
-         String username,
+
          String email,
          String password,
          String name

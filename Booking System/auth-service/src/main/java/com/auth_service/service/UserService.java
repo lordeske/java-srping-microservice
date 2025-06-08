@@ -51,7 +51,6 @@ public class UserService {
         newUser.setName(userRegistrationDTO.name());
         newUser.setEnabled(true);
         newUser.setRole(Role.USER);
-        newUser.setUsername(userRegistrationDTO.username());
         newUser.setPassword(passwordEncoder.encode(userRegistrationDTO.password()));
 
         User savedUser = userRepository.save(newUser);
@@ -65,7 +64,7 @@ public class UserService {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        loginRequestDTO.username(),
+                        loginRequestDTO.email(),
                         loginRequestDTO.password()
                 )
         );

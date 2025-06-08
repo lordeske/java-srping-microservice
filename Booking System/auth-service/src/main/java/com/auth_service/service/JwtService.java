@@ -18,6 +18,12 @@ public class JwtService {
 
 
 
+    private Key getSignKey()
+    {
+        byte [] keyBytes = jwtSecret.getBytes();
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
 
     public String generateToken(UserDetails userDetails)
     {
@@ -32,6 +38,43 @@ public class JwtService {
                 .compact();
 
 
+
+    }
+
+    public String extractEmail(String token)
+    {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+
+
+    }
+
+
+    private Date extractExpiration(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
+    public boolean isTokenExpired(String token)
+    {
+
+        return extractExpiration(token).before(new Date());
+    }
+
+
+    public boolean isTokenValid(String token, UserDetails userDetails)
+    {
+
+        final String email = extractEmail(token);
+        return (email.equals(userDetails.getUsername())) && !isTokenExpired(token);
 
     }
 
