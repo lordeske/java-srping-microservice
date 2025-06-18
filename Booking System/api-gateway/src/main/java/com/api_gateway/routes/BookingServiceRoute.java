@@ -43,6 +43,21 @@ public class BookingServiceRoute {
                                                     URI.create("http://localhost:8081/api/v1/booking/" + id)
                                             ).handle(request);
                                         })
+
+                                .route(RequestPredicates.POST("/pay/{id}"),
+                                        request -> {
+                                        String id = request.pathVariable("id");
+                                        return HandlerFunctions.http(
+                                                URI.create("http://localhost:8081/api/v1/booking/pay/"+ id)
+                                        ).handle(request);
+                                        })
+                                .route(RequestPredicates.POST("/check-in/{id}"),
+                                        request -> {
+                                            String id = request.pathVariable("id");
+                                            return HandlerFunctions.http(
+                                                    URI.create("http://localhost:8081/api/v1/booking/check-in/"+ id)
+                                            ).handle(request);
+                                        })
                                 .filter(CircuitBreakerFilterFunctions.circuitBreaker(
                                         "bookingServiceCircuitBreaker",
                                         URI.create("forward:/fallbackRoute")

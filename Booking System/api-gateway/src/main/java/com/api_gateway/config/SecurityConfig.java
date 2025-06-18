@@ -30,8 +30,9 @@ public class SecurityConfig {
 
                         .requestMatchers(excludedUrls).permitAll()
                         .requestMatchers("/api/v1/booking", "/api/v1/booking/**").authenticated()
-
+                        .requestMatchers("/api/v1/inventory/**").permitAll()
                 )
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
